@@ -6,7 +6,7 @@ import lejos.util.Stopwatch;
 public class ParaliticDriveBehavior implements Behavior{
 	
 	protected boolean supressed;
-	protected Stopwatch controlWatch;;
+	protected Stopwatch controlWatch;
  
 	@Override
 	public boolean takeControl()

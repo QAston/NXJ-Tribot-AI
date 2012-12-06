@@ -110,13 +110,13 @@ public class TribotAI {
 	    RConsole.println("Test");
 	    RConsole.close();*/
 		pilot.setTravelSpeed(25);
-		pilot.setRotateSpeed(115);
-		//pilot.setRotateSpeed(speed);
-		Button.waitForAnyPress();
-		
+		pilot.setRotateSpeed(155);
+		LCD.drawString("STARTUJE!!!", 0, 0, false);
+		LCD.drawString("LEWA!!!", 1, 1, false);
+		Delay.msDelay(4700);
 		AvgSensor.Init();
-		Delay.msDelay(1000);
-        Behavior [] bArray = {new DriveBehavior(), new PIDEdgeDriveBehavior(), new RotateBehavior()};
+		Delay.msDelay(300);
+        Behavior [] bArray = {new PIDEdgeDriveBehavior(), new RotateBehavior()};
         Arbitrator arby = new Arbitrator(bArray);
         arby.start();
 	}

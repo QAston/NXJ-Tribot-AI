@@ -10,8 +10,8 @@ public class PIDEdgeDriveBehavior implements Behavior{
 	protected boolean supressed;
 
 	protected PIDController pidControler;
-	protected int setpoint = 385;
-	protected float deadband = 10;
+	protected static int setpoint = 365;
+	protected static float deadband = 10;
 	protected Stopwatch controlWatch = new Stopwatch();
 	
 	// dla speeda 25
@@ -34,14 +34,15 @@ public class PIDEdgeDriveBehavior implements Behavior{
     protected float integrallimitlow = -15f;
     protected int msdelay = 10;*/
 	
-	protected float kp = 0.26f;
-	protected float ki = 0.003f;
-    protected float kd = 0.35f;
-    protected float limithigh = 100.0f;
-    protected float limitlow = -100.0f;
-    protected float integrallimithigh = 25f;
-    protected float integrallimitlow = -25f;
-    protected int msdelay = 5;
+	protected static float kp = 0.26f;
+	protected static float ki = 0.003f;
+    protected static float kd = 0.35f;
+    protected static float limithigh = 100.0f;
+    protected static float limitlow = -100.0f;
+    protected static float integrallimithigh = 25f;
+    protected static float integrallimitlow = -25f;
+    protected static int msdelay = 5;
+    public static int speed = 25;
     
     public PIDEdgeDriveBehavior()
     {
@@ -67,27 +68,24 @@ public class PIDEdgeDriveBehavior implements Behavior{
 		supressed = false;
 		if (supressed)
 			return;
-
+		
+		TribotAI.pilot.setTravelSpeed(17);
+		boolean checkWatch = true;
 		controlWatch.reset();
 		while (!supressed)
 		{
 			float avg = AvgSensor.Avg();
+			if (checkWatch && controlWatch.elapsed() > 1000)
+			{
+				TribotAI.pilot.setTravelSpeed(25);
+				checkWatch = false;
+			}
+
 			LCD.drawInt((int)avg, 0, 0);
 	        int pct = pidControler.doPID((int)avg);
 	        TribotAI.pilot.steer(TribotAI.strona*pct);
-			/*if (AvgSensor.Avg() < 500)
-			{
-				controlWatch.reset();
-			}
-			else
-			{
-				if (controlWatch.elapsed() > 400)
-				{
-					TribotAI.strona *= -1;
-					controlWatch.reset();
-				}
-			}*/
 		}
+		TribotAI.pilot.stop();
 	}
 
 	@Override

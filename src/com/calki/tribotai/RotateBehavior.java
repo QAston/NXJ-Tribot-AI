@@ -11,30 +11,40 @@ import lejos.util.Stopwatch;
 
 public class RotateBehavior implements Behavior{
 	
-	protected final int[] rotations = new int[]{15, -40, 90, -180, 180};
+	protected final int[] rotations = new int[]{115, -145, 180};
 	protected boolean supressed;
-	protected Stopwatch controlWatch;;
+	protected Stopwatch controlWatch1;
 	
-	public boolean needFinish()
-	{
-		return AvgSensor.Avg() < 450 || supressed;
-	}
+	public boolean control = false;
+	
 	@Override
 	public boolean takeControl()
 	{
-		if (controlWatch == null)
-		{
-			controlWatch = new Stopwatch();
-			controlWatch.reset();
+		if (supressed)
 			return false;
-		}
-		if (AvgSensor.Avg() < 500)
+		if (!control)
 		{
-			controlWatch.reset();
-			return false;
+			if (controlWatch1 == null)
+			{
+				controlWatch1 = new Stopwatch();
+				controlWatch1.reset();
+			}
+			else if (AvgSensor.Avg() < 500)
+			{
+				controlWatch1.reset();
+			}
+			else if (controlWatch1.elapsed() > 200)
+			{
+				controlWatch1 = null;
+				control = true;
+			}
+			return control;
 		}
 		else
-			return controlWatch.elapsed() > 200;
+		{
+			control = TribotAI.color.getRawLightValue() > 450;
+			return control;
+		}
 	}
 
 	@Override
@@ -43,21 +53,16 @@ public class RotateBehavior implements Behavior{
 		if (supressed)
 			return;
 		
-		for (int i = 0; !needFinish() &&  i < rotations.length; ++i)
+		for (int i = 0; !supressed && control &&  i < rotations.length; ++i)
 		{
 			int angle = rotations[i];
 			if (i > 0)
 				angle -= rotations[i-1];
-			TribotAI.pilot.rotate(angle, true);
-			while(TribotAI.pilot.isMoving())
-			{
-				if (needFinish())
-				{
-					TribotAI.pilot.stop();
-					return;
-				}
-			}
+			TribotAI.pilot.rotate(TribotAI.strona*angle, true);
+			while(!supressed && control && TribotAI.pilot.isMoving())
+				Thread.yield();
 		}
+		TribotAI.pilot.stop();
 	}
 
 	@Override

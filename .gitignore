@@ -4,5 +4,8 @@
 *.jar
 *.war
 *.ear
+*.nxd
+*.nxj
 .directory
+desktop.ini
 .dropbox

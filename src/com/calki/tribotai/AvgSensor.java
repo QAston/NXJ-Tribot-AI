@@ -9,7 +9,6 @@ public class AvgSensor extends Thread {
 	private static final int buforSize = 2;
 	private static final int delayMs = 0;
 	private static AvgSensor instance;
-	private static Stopwatch controlWatch;
 	public static void Init()
 	{
 		instance = new AvgSensor();
